@@ -26,4 +26,4 @@ files into different folders based on their file extensions.
 - Add an undo feature.
 
 ## Author
-**Siddhi Deshmukh**
+Siddhi Deshmukh

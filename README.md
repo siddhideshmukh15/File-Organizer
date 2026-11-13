@@ -33,4 +33,4 @@ A Python-based application that automatically organizes files into different fol
 - Generate an organization report.
 
 ## Author
-**Siddhi Deshmukh**
+Siddhi Deshmukh

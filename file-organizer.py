@@ -1,42 +1,70 @@
 
-from pathlib import Path
+import os
+import shutil
 
-folder_path = Path(input("Enter folder path: "))
+print("===== FILE ORGANIZER =====")
+
+folder = input("Enter folder path: ")
 
 file_types = {
-    "Images": [".jpg", ".jpeg", ".png", ".gif"],
-    "Documents": [".pdf", ".docx", ".txt", ".pptx"],
-    "Videos": [".mp4", ".mkv", ".avi"],
+    "Images": [".jpg", ".jpeg", ".png"],
+    "Documents": [".pdf", ".docx", ".txt"],
+    "Videos": [".mp4", ".mkv"],
     "Music": [".mp3", ".wav"],
-    "Code": [".py", ".java", ".c", ".html"],
-    "Archives": [".zip", ".rar"]
+    "Others": []
 }
 
-if folder_path.exists() and folder_path.is_dir():
-    count = 0
+if os.path.isdir(folder):
+    files = os.listdir(folder)
 
-    for file in folder_path.iterdir():
-        if file.is_file():
-            extension = file.suffix.lower()
+    print("\n===== PREVIEW =====")
 
-            for folder, extensions in file_types.items():
+    for file in files:
+        file_path = os.path.join(folder, file)
+
+        if os.path.isfile(file_path):
+            extension = os.path.splitext(file)[1].lower()
+            category = "Others"
+
+            for name, extensions in file_types.items():
                 if extension in extensions:
-                    new_folder = folder_path / folder
-                    new_folder.mkdir(exist_ok=True)
-
-                    destination = new_folder / file.name
-
-                    if destination.exists():
-                        print(file.name, "already exists!")
-                        break
-
-                    file.rename(destination)
-                    print(file.name, "moved to", folder)
-
-                    count += 1
+                    category = name
                     break
 
-    print("\nTotal files organized:", count)
+            print(file, "->", category)
+
+    confirm = input("\nOrganize files? (yes/no): ")
+
+    if confirm.lower() == "yes":
+        for file in files:
+            file_path = os.path.join(folder, file)
+
+            if os.path.isfile(file_path):
+                extension = os.path.splitext(file)[1].lower()
+                category = "Others"
+
+                for name, extensions in file_types.items():
+                    if extension in extensions:
+                        category = name
+                        break
+
+                new_folder = os.path.join(folder, category)
+                os.makedirs(new_folder, exist_ok=True)
+
+                destination = os.path.join(new_folder, file)
+
+                if os.path.exists(destination):
+                    print("Skipped duplicate:", file)
+                    continue
+
+                shutil.move(file_path, destination)
+                print("Moved:", file)
+
+        print("\nOrganization completed!")
+
+    else:
+        print("Organization cancelled!")
 
 else:
     print("Invalid folder path!")
+
